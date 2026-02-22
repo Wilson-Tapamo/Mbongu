@@ -87,6 +87,26 @@ export default function Auth() {
         }
     };
 
+    // After successful registration, auto-login
+    const handlePostRegisterLogin = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: formData.phone, password: formData.password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Erreur de connexion');
+            login(data.user);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const renderWelcome = () => (
         <div className="text-center space-y-6">
             <div className="relative inline-block">
@@ -203,7 +223,7 @@ export default function Auth() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="••••••••"
-                    className="w-full bg-white/10 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-lg letter-spacing-[0.5em]"
+                    className="w-full bg-white/10 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-lg"
                 />
                 {error && <p className="text-rose-400 text-sm mt-2">{error}</p>}
                 {isLogin ? (
@@ -274,6 +294,7 @@ export default function Auth() {
 
                 <button
                     onClick={handleFinish}
+                    disabled={loading}
                     className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-bold text-lg shadow-xl shadow-indigo-900/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mt-4"
                 >
                     {loading ? (
@@ -299,23 +320,28 @@ export default function Auth() {
             </div>
             <div className="space-y-2">
                 <h2 className="text-3xl font-black text-white">Félicitations !</h2>
-                <p className="text-indigo-200 text-lg">Ton empire **Mbongu** est prêt.</p>
+                <p className="text-indigo-200 text-lg">Ton empire Mbongu est prêt.</p>
             </div>
             <p className="text-indigo-200/60">
                 Tu vas maintenant accéder à ton tableau de bord pour sécuriser ton business.
             </p>
+            {error && <p className="text-rose-400 text-sm">{error}</p>}
             <button
-                onClick={() => login('1')} // For now, just login as first user
-                className="w-full py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+                onClick={handlePostRegisterLogin}
+                disabled={loading}
+                className="w-full py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
             >
-                Ouvrir mon business
+                {loading ? (
+                    <div className="w-6 h-6 border-3 border-indigo-300 border-t-indigo-700 rounded-full animate-spin" />
+                ) : (
+                    'Ouvrir mon business'
+                )}
             </button>
         </div>
     );
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0a0a0f]">
-            {/* Background circles */}
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-indigo-600/20 blur-[100px]" />
             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-600/20 blur-[100px]" />
 
@@ -343,14 +369,12 @@ export default function Auth() {
                     </motion.div>
                 </AnimatePresence>
 
-                {/* Step Indicator */}
                 {step !== 'welcome' && step !== 'success' && (
                     <div className="flex gap-2 justify-center mt-8">
                         {['name', 'phone', 'password', 'role'].map((s) => (
                             <div
                                 key={s}
-                                className={`h-1 rounded-full transition-all duration-300 ${step === s ? 'w-8 bg-indigo-500' : 'w-2 bg-white/10'
-                                    }`}
+                                className={`h-1 rounded-full transition-all duration-300 ${step === s ? 'w-8 bg-indigo-500' : 'w-2 bg-white/10'}`}
                             />
                         ))}
                     </div>
