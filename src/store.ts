@@ -9,8 +9,9 @@ export interface User {
   id: string;
   name: string;
   role: UserRole;
-  shopId?: string; // If seller, linked to a specific shop
-  email: string;
+  shopId?: string;
+  email?: string; // ✅ optionnel - l'API ne le retourne pas toujours
+  phone?: string; // ✅ ajouté - l'API retourne le phone
 }
 
 export interface Shop {
@@ -53,7 +54,6 @@ export interface Expense {
 export type Page = 'dashboard' | 'pos' | 'stock' | 'finance' | 'ai' | 'team';
 
 interface AppState {
-  // UI State
   currentPage: Page;
   setPage: (page: Page) => void;
   darkMode: boolean;
@@ -61,7 +61,6 @@ interface AppState {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
 
-  // Cart State
   cartItems: { productId: string; name: string; qty: number; price: number }[];
   addToCart: (item: { productId: string; name: string; qty: number; price: number }) => void;
   removeFromCart: (productId: string) => void;
@@ -69,7 +68,6 @@ interface AppState {
   showSaleSuccess: boolean;
   setShowSaleSuccess: (show: boolean) => void;
 
-  // Data State
   currentUser: User | null;
   users: User[];
   shops: Shop[];
@@ -77,7 +75,6 @@ interface AppState {
   sales: Sale[];
   expenses: Expense[];
 
-  // Dashboard Stats
   stats: {
     revenue: number;
     expenses: number;
@@ -86,18 +83,16 @@ interface AppState {
   } | null;
   isLoading: boolean;
 
-  // Actions
   login: (userData: any) => void;
   logout: () => void;
   fetchData: () => Promise<void>;
   addUser: (user: Omit<User, 'id'>) => void;
   removeUser: (userId: string) => void;
   addShop: (shop: Omit<Shop, 'id'>) => void;
-
   addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
   addSale: (sale: Omit<Sale, 'id'>) => Promise<void>;
   addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
-  updateStock: (productId: string, quantity: number) => void; // quantity can be negative
+  updateStock: (productId: string, quantity: number) => void;
 }
 
 // --- Mock Data ---
@@ -116,7 +111,6 @@ const MOCK_USERS: User[] = [
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
-      // UI Defaults
       currentPage: 'dashboard',
       setPage: (page) => set({ currentPage: page }),
       darkMode: false,
@@ -124,7 +118,6 @@ export const useStore = create<AppState>()(
       sidebarOpen: false,
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
 
-      // Cart Defaults
       cartItems: [],
       addToCart: (item) => set((state) => {
         const existing = state.cartItems.find(i => i.productId === item.productId);
@@ -140,7 +133,6 @@ export const useStore = create<AppState>()(
       showSaleSuccess: false,
       setShowSaleSuccess: (show) => set({ showSaleSuccess: show }),
 
-      // Data Defaults
       currentUser: null,
       users: MOCK_USERS,
       shops: MOCK_SHOPS,
@@ -150,12 +142,20 @@ export const useStore = create<AppState>()(
       stats: null,
       isLoading: false,
 
-      // Actions
       login: (userData) => {
-        set({ currentUser: userData as User });
-        // Fetch data immediately after login
+        // ✅ Normalise l'objet user pour garantir que tous les champs existent
+        const normalizedUser: User = {
+          id: userData.id ?? '',
+          name: userData.name ?? 'Utilisateur',
+          role: userData.role ?? 'seller',
+          shopId: userData.shopId ?? userData.shop_id ?? undefined,
+          email: userData.email ?? undefined,
+          phone: userData.phone ?? undefined,
+        };
+        set({ currentUser: normalizedUser });
         get().fetchData();
       },
+
       logout: () => set({ currentUser: null, products: [], sales: [], expenses: [], stats: null }),
 
       fetchData: async () => {
@@ -164,13 +164,12 @@ export const useStore = create<AppState>()(
 
         set({ isLoading: true });
         try {
-          // Fetch Shops & Team
           const [shopsRes, teamRes] = await Promise.all([
             fetch(`/api/shops`),
             fetch(`/api/team`)
           ]);
-          const shopsData = await shopsRes.json();
-          const teamData = await teamRes.json();
+          const shopsData = shopsRes.ok ? await shopsRes.json() : [];
+          const teamData = teamRes.ok ? await teamRes.json() : [];
 
           const shopId = currentUser.shopId;
           let productsData = [];
@@ -178,7 +177,6 @@ export const useStore = create<AppState>()(
           let expensesData = [];
           let salesData = [];
 
-          // For directors, if no shopId selected, try to use first shop
           const targetId = currentUser.role === 'director'
             ? (shopId || (Array.isArray(shopsData) && shopsData.length > 0 ? shopsData[0].id : null))
             : shopId;
@@ -190,10 +188,10 @@ export const useStore = create<AppState>()(
               fetch(`/api/expenses?shopId=${targetId}`),
               fetch(`/api/sales/get?shopId=${targetId}`)
             ]);
-            productsData = await pRes.json();
-            statsData = await sRes.json();
-            expensesData = await eRes.json();
-            salesData = await salesRes.json();
+            productsData = pRes.ok ? await pRes.json() : [];
+            statsData = sRes.ok ? await sRes.json() : null;
+            expensesData = eRes.ok ? await eRes.json() : [];
+            salesData = salesRes.ok ? await salesRes.json() : [];
           }
 
           set({
@@ -217,17 +215,11 @@ export const useStore = create<AppState>()(
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(user)
         });
-        if (res.ok) {
-          get().fetchData();
-        }
+        if (res.ok) get().fetchData();
       },
       removeUser: async (userId) => {
-        const res = await fetch(`/api/team?id=${userId}`, {
-          method: 'DELETE'
-        });
-        if (res.ok) {
-          get().fetchData();
-        }
+        const res = await fetch(`/api/team?id=${userId}`, { method: 'DELETE' });
+        if (res.ok) get().fetchData();
       },
       addShop: async (shop) => {
         const res = await fetch('/api/shops', {
@@ -235,31 +227,23 @@ export const useStore = create<AppState>()(
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(shop)
         });
-        if (res.ok) {
-          get().fetchData();
-        }
+        if (res.ok) get().fetchData();
       },
-
       addProduct: async (product) => {
         const res = await fetch('/api/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(product)
         });
-        if (res.ok) {
-          get().fetchData(); // Refresh data
-        }
+        if (res.ok) get().fetchData();
       },
       addSale: async (sale) => {
-        // Will implement POST /api/sales later, for now refresh
         const res = await fetch('/api/sales', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sale)
         });
-        if (res.ok) {
-          get().fetchData();
-        }
+        if (res.ok) get().fetchData();
       },
       addExpense: async (expense) => {
         const res = await fetch('/api/expenses', {
@@ -267,9 +251,7 @@ export const useStore = create<AppState>()(
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(expense)
         });
-        if (res.ok) {
-          get().fetchData();
-        }
+        if (res.ok) get().fetchData();
       },
       updateStock: (productId, quantity) => set((state) => ({
         products: state.products.map(p =>
