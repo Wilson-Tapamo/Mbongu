@@ -93,7 +93,7 @@ export function App() {
             {/* Profile */}
             <div className={`hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl cursor-pointer ${darkMode ? 'hover:bg-white/10' : 'hover:bg-white/40'}`}>
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold">
-                {currentUser?.name.substring(0, 2).toUpperCase() || 'PF'}
+                {currentUser?.name?.substring(0, 2).toUpperCase() ?? 'PF'}
               </div>
               <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 {currentUser?.name || 'Utilisateur'}
