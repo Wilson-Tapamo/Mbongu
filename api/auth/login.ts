@@ -39,7 +39,7 @@ export default async function handler(req: any, res: any) {
             }
         });
     } catch (error: any) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        console.error('[LOGIN ERROR]', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }

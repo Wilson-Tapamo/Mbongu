@@ -42,7 +42,7 @@ export default async function handler(req: any, res: any) {
             }
         });
     } catch (error: any) {
-        console.error(error);
+        console.error('[REGISTER ERROR]', error);
         return res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }
