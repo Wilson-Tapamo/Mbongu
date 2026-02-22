@@ -26,10 +26,10 @@ export function Sidebar() {
   const handleSwitchUser = () => {
     if (currentUser?.role === 'director') {
       const seller = users.find(u => u.role === 'seller');
-      if (seller) login(seller.id);
+      if (seller) login(seller);
     } else {
       const director = users.find(u => u.role === 'director');
-      if (director) login(director.id);
+      if (director) login(director);
     }
   };
 
@@ -71,10 +71,10 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => setPage(item.id as Page)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${isActive
-                    ? `bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200/50`
-                    : darkMode
-                      ? 'text-gray-400 hover:text-white hover:bg-white/10'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                  ? `bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200/50`
+                  : darkMode
+                    ? 'text-gray-400 hover:text-white hover:bg-white/10'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                   }`}
               >
                 <item.icon className="w-5 h-5" />

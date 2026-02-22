@@ -115,7 +115,7 @@ export function Dashboard() {
             <span className="text-indigo-100 text-sm font-medium">Mbongu Coach • Résumé</span>
           </div>
           <p className="text-white text-base lg:text-lg font-medium leading-relaxed">
-            Bonjour {currentUser?.name.split(' ')[0]} ! {period === 'today' ? "Aujourd'hui" : `Ce ${period === 'week' ? 'semaine' : 'mois'}`} : <span className="text-amber-300 font-bold">{formatCFA(periodRevenue)}</span> de ventes.
+            Bonjour {currentUser?.name?.split(' ')[0] ?? 'là'} ! {period === 'today' ? "Aujourd'hui" : `Ce ${period === 'week' ? 'semaine' : 'mois'}`} : <span className="text-amber-300 font-bold">{formatCFA(periodRevenue)}</span> de ventes.
             {lowStockProducts.length > 0 ? ` Attention, ${lowStockProducts.length} produits sont en rupture.` : ' Stocks optimaux.'}
           </p>
         </div>
