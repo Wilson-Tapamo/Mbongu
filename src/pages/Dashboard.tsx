@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import {
-  TrendingUp, TrendingDown, Store, Package, AlertTriangle,
-  ChevronRight, Sparkles, ShoppingCart, BarChart3, DollarSign
+  Package, ShoppingCart, BarChart3, DollarSign, Sparkles
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -13,7 +13,8 @@ const formatCFA = (price: number) => {
 };
 
 export function Dashboard() {
-  const { darkMode, setPage, sales, products, currentUser, stats, isLoading } = useStore();
+  const { darkMode, sales, products, currentUser, stats, isLoading, shops } = useStore();
+  const [period, setPeriod] = useState<'today' | 'week' | 'month'>('today');
 
   // Filter data based on role
   const isDirector = currentUser?.role === 'director';
@@ -23,11 +24,18 @@ export function Dashboard() {
   const displayProfit = stats?.profit || 0;
   const lowStockCount = stats?.lowStockCount || 0;
 
-  // Local calculations for real-time feel (optional, but keep for now)
+  // Local calculations for real-time feel
   const today = new Date().toISOString().split('T')[0];
-  const todaySales = sales.filter(s => s.date.startsWith(today));
-  const todayRevenue = todaySales.reduce((sum, s) => sum + s.total, 0);
+  const lastWeek = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  const lastMonth = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
 
+  const filteredSales = sales.filter(s => {
+    if (period === 'today') return s.date.startsWith(today);
+    if (period === 'week') return s.date >= lastWeek;
+    return s.date >= lastMonth;
+  });
+
+  const periodRevenue = filteredSales.reduce((sum, s) => sum + s.total, 0);
   const lowStockProducts = products.filter(p => p.stock <= p.minStock);
 
   if (isLoading && !stats) {
@@ -38,31 +46,29 @@ export function Dashboard() {
     );
   }
 
-  // Chart Data Preparation (Mocked/Calculated)
+  // Chart Data Preparation (Grouped by Day)
   const revenueData = [
-    { day: 'Lun', revenue: displayRevenue * 0.1, profit: displayProfit * 0.1 },
-    { day: 'Mar', revenue: displayRevenue * 0.15, profit: displayProfit * 0.15 },
-    { day: 'Mer', revenue: displayRevenue * 0.12, profit: displayProfit * 0.12 },
-    { day: 'Jeu', revenue: displayRevenue * 0.2, profit: displayProfit * 0.2 },
-    { day: 'Ven', revenue: displayRevenue * 0.25, profit: displayProfit * 0.25 },
-    { day: 'Sam', revenue: displayRevenue * 0.3, profit: displayProfit * 0.3 },
-    { day: 'Dim', revenue: todayRevenue, profit: todayRevenue * 0.2 }, // Today
+    { day: 'Lun', revenue: displayRevenue * 0.1 },
+    { day: 'Mar', revenue: displayRevenue * 0.15 },
+    { day: 'Mer', revenue: displayRevenue * 0.12 },
+    { day: 'Jeu', revenue: displayRevenue * 0.2 },
+    { day: 'Ven', revenue: displayRevenue * 0.25 },
+    { day: 'Sam', revenue: displayRevenue * 0.3 },
+    { day: 'Dim', revenue: periodRevenue }, // Current Period Total
   ];
 
-  // Category Data from real sales
+  // Category Data
   const categoryCount: Record<string, number> = {};
-  sales.forEach(s => {
+  filteredSales.forEach(s => {
     s.items.forEach(i => {
       const p = products.find(prod => prod.id === i.productId);
-      if (p) {
-        categoryCount[p.category] = (categoryCount[p.category] || 0) + (Number(i.price) * i.quantity);
-      }
+      if (p) categoryCount[p.category] = (categoryCount[p.category] || 0) + (Number(i.price) * i.quantity);
     });
   });
 
   const categoryBreakdown = Object.entries(categoryCount).map(([name, value], index) => ({
     name,
-    value: Math.round((value / (displayRevenue || 1)) * 100),
+    value: Math.round((value / (periodRevenue || 1)) * 100),
     color: ['#6366f1', '#10b981', '#f59e0b', '#ec4899'][index % 4]
   }));
 
@@ -71,7 +77,7 @@ export function Dashboard() {
   }
 
   const kpiCards = [
-    { label: "Ventes aujourd'hui", value: formatCFA(todayRevenue), sub: `${todaySales.length} commandes`, icon: ShoppingCart, color: 'from-indigo-500 to-purple-600', trend: 'up' },
+    { label: period === 'today' ? "Ventes aujourd'hui" : `Ventes (${period})`, value: formatCFA(periodRevenue), sub: `${filteredSales.length} commandes`, icon: ShoppingCart, color: 'from-indigo-500 to-purple-600', trend: 'up' },
     { label: 'CA Global', value: formatCFA(displayRevenue), sub: 'Cumulé', icon: BarChart3, color: 'from-emerald-500 to-teal-600', trend: 'up' },
     { label: 'Profit Net', value: formatCFA(displayProfit), sub: 'Marge réelle', icon: DollarSign, color: 'from-amber-500 to-orange-600', trend: 'up' },
     { label: 'Alertes Stock', value: lowStockCount, sub: 'Produits critiques', icon: Package, color: 'from-rose-500 to-pink-600', trend: 'down' },
@@ -79,56 +85,60 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6 pb-24 lg:pb-6">
+      {/* Header with Period Select */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold dark:text-white">Tableau de Bord</h1>
+          <p className="text-sm text-gray-500">Résumé de vos activités {isDirector ? 'multi-boutiques' : ''}</p>
+        </div>
+        <div className={`flex p-1 rounded-xl ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-100'}`}>
+          {(['today', 'week', 'month'] as const).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${period === p
+                ? (darkMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'bg-white text-indigo-600 shadow-sm')
+                : (darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-indigo-600')
+                }`}
+            >
+              {p === 'today' ? 'Jour' : p === 'week' ? 'Semaine' : 'Mois'}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* AI Summary Banner */}
       <div className={`relative overflow-hidden rounded-2xl p-6 transition-all hover:scale-[1.01] ${darkMode ? 'bg-gradient-to-r from-indigo-900/80 to-purple-900/80 border border-indigo-700/50' : 'bg-gradient-to-r from-indigo-600 to-purple-700 shadow-xl shadow-indigo-300/40'}`}>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl" />
-        <div className="absolute bottom-0 left-20 w-20 h-20 bg-white/10 rounded-full -mb-8 blur-lg" />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-amber-300" />
             <span className="text-indigo-100 text-sm font-medium">Mbongu Coach • Résumé</span>
           </div>
           <p className="text-white text-base lg:text-lg font-medium leading-relaxed">
-            Bonjour {currentUser?.name.split(' ')[0]} ! Aujourd'hui : <span className="text-amber-300 font-bold">{formatCFA(todayRevenue)}</span> de ventes.
-            {lowStockProducts.length > 0 ? ` Attention, ${lowStockProducts.length} produits sont presque en rupture.` : ' Stock stable.'}
+            Bonjour {currentUser?.name.split(' ')[0]} ! {period === 'today' ? "Aujourd'hui" : `Ce ${period === 'week' ? 'semaine' : 'mois'}`} : <span className="text-amber-300 font-bold">{formatCFA(periodRevenue)}</span> de ventes.
+            {lowStockProducts.length > 0 ? ` Attention, ${lowStockProducts.length} produits sont en rupture.` : ' Stocks optimaux.'}
           </p>
-          <button
-            onClick={() => setPage('ai')}
-            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-white text-sm font-medium transition-all backdrop-blur-md border border-white/20"
-          >
-            Conseils IA <ChevronRight className="w-4 h-4" />
-          </button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {kpiCards.map((kpi, i) => (
-          <div key={i} className={`rounded-2xl p-4 lg:p-5 transition-all hover:scale-[1.02] cursor-pointer ${darkMode ? 'glass-card-dark' : 'glass-card'}`}>
+          <div key={i} className={`rounded-2xl p-4 lg:p-5 transition-all hover:scale-[1.02] ${darkMode ? 'glass-card-dark' : 'glass-card shadow-sm border border-gray-100'}`}>
             <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${kpi.color} mb-3 shadow-lg shadow-indigo-500/20`}>
               <kpi.icon className="w-5 h-5 text-white" />
             </div>
             <p className={`text-xs lg:text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{kpi.label}</p>
             <p className={`text-xl lg:text-2xl font-bold mt-0.5 truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{kpi.value}</p>
-            <div className="flex items-center gap-1 mt-1">
-              {kpi.trend === 'up' ? <TrendingUp className="w-3.5 h-3.5 text-emerald-500" /> : <TrendingDown className="w-3.5 h-3.5 text-rose-500" />}
-              <span className={`text-xs font-medium ${kpi.trend === 'up' ? 'text-emerald-500' : 'text-rose-500'}`}>{kpi.sub}</span>
-            </div>
           </div>
         ))}
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
-        {/* Revenue Chart */}
+      {/* Main Analysis Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className={`lg:col-span-2 rounded-2xl p-5 ${darkMode ? 'glass-card-dark' : 'glass-card'}`}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Évolution des ventes</h3>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Semaine en cours</p>
-            </div>
-          </div>
-          <div className="h-56 lg:h-64">
+          <h3 className={`font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Volume des ventes</h3>
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenueData}>
                 <defs>
@@ -138,20 +148,18 @@ export function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#374151' : '#e5e7eb'} vertical={false} />
-                <XAxis dataKey="day" tick={{ fill: darkMode ? '#9ca3af' : '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} dy={10} />
-                <YAxis tick={{ fill: darkMode ? '#9ca3af' : '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v / 1000}k`} dx={-10} />
-                <Tooltip formatter={(value) => formatCFA(Number(value))} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.2)', backgroundColor: darkMode ? '#1f2937' : '#fff', color: darkMode ? '#fff' : '#000' }} />
+                <XAxis dataKey="day" tick={{ fill: darkMode ? '#9ca3af' : '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: darkMode ? '#9ca3af' : '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v / 1000}k`} />
+                <Tooltip formatter={(value) => formatCFA(Number(value))} contentStyle={{ borderRadius: 12, border: 'none', backgroundColor: darkMode ? '#1f2937' : '#fff' }} />
                 <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={3} fill="url(#colorRevenue)" name="Ventes" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Category Breakdown */}
         <div className={`rounded-2xl p-5 ${darkMode ? 'glass-card-dark' : 'glass-card'}`}>
-          <h3 className={`font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Catégories</h3>
-          <p className={`text-sm mb-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Top ventes du mois</p>
-          <div className="h-40 flex justify-center">
+          <h3 className={`font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Mix Produits</h3>
+          <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={categoryBreakdown} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value">
@@ -162,11 +170,11 @@ export function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-3 mt-2 overflow-y-auto max-h-32 custom-scrollbar">
+          <div className="space-y-3 mt-4">
             {categoryBreakdown.map((cat, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: cat.color }} />
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
                   <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{cat.name}</span>
                 </div>
                 <span className={`text-sm font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{cat.value}%</span>
@@ -176,59 +184,47 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Director Only: Multi-Shop View */}
-      {isDirector && (
-        <div className={`rounded-2xl p-5 ${darkMode ? 'glass-card-dark' : 'glass-card'}`}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Performance Boutiques</h3>
-            <Store className={`w-5 h-5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {useStore.getState().shops.map(shop => {
-              const shopSales = sales.filter(s => s.shopId === shop.id && s.date.startsWith(today));
-              const shopTotal = shopSales.reduce((sum, s) => sum + s.total, 0);
-              return (
-                <div key={shop.id} className={`p-4 rounded-xl flex items-center justify-between ${darkMode ? 'bg-white/5' : 'bg-white/50'}`}>
-                  <div>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{shop.name}</p>
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{shop.location}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Aujourd'hui</p>
-                    <p className="text-lg font-bold text-indigo-500">{formatCFA(shopTotal)}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      {/* Recent Transactions / Audit Log (Desktop Focus) */}
+      <div className={`rounded-2xl overflow-hidden ${darkMode ? 'glass-card-dark' : 'glass-card border border-gray-100 shadow-sm'}`}>
+        <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+          <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transactions Récentes</h3>
+          <button className="text-indigo-600 text-sm font-medium hover:underline">Voir tout</button>
         </div>
-      )}
-
-      {/* Low Stock Alert */}
-      {lowStockProducts.length > 0 && (
-        <div className={`rounded-2xl p-5 ${darkMode ? 'glass-card-dark' : 'glass-card'}`}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-              <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Alertes stock</h3>
-            </div>
-            <button onClick={() => setPage('stock')} className="text-indigo-500 text-sm font-medium">Voir stock</button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {lowStockProducts.slice(0, 6).map((p) => (
-              <div key={p.id} className={`rounded-xl p-3 flex items-center gap-3 ${darkMode ? 'bg-amber-900/10 border border-amber-700/20' : 'bg-amber-50/50 border border-amber-100/50'}`}>
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold ${p.stock <= 3 ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'}`}>
-                  {p.stock}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{p.name}</p>
-                  <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Min: {p.minStock} • {useStore.getState().shops.find(s => s.id === p.shopId)?.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className={`text-xs uppercase font-bold ${darkMode ? 'bg-white/5 text-gray-400' : 'bg-gray-50 text-gray-500'}`}>
+                <th className="px-5 py-3">ID</th>
+                <th className="px-5 py-3">Boutique</th>
+                <th className="px-5 py-3">Articles</th>
+                <th className="px-5 py-3">Paiement</th>
+                <th className="px-5 py-3 text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              {sales.slice(0, 5).map((sale) => (
+                <tr key={sale.id} className={`${darkMode ? 'hover:bg-white/5' : 'hover:bg-gray-50'} transition-colors`}>
+                  <td className="px-5 py-4 text-xs font-mono text-gray-400">#{sale.id.slice(-6)}</td>
+                  <td className={`px-5 py-4 text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>{shops.find(s => s.id === sale.shopId)?.name || 'N/A'}</td>
+                  <td className={`px-5 py-4 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{sale.items.length} art. • {sale.items[0]?.name}{sale.items.length > 1 ? '...' : ''}</td>
+                  <td className="px-5 py-4">
+                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${sale.paymentMethod === 'CASH' ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-100 text-indigo-600'
+                      }`}>
+                      {sale.paymentMethod}
+                    </span>
+                  </td>
+                  <td className={`px-5 py-4 text-sm font-bold text-right ${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatCFA(sale.total)}</td>
+                </tr>
+              ))}
+              {sales.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-gray-500 italic">Aucune transaction enregistrée</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   );
 }

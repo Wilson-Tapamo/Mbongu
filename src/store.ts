@@ -113,26 +113,6 @@ const MOCK_USERS: User[] = [
   { id: '3', name: 'Marie (Vendeur Akwa)', role: 'seller', shopId: '2', email: 'marie@mbongu.cm' },
 ];
 
-const MOCK_PRODUCTS: Product[] = [
-  { id: '1', name: 'Ciment Dangote 50kg', category: 'Matériaux', price: 4800, cost: 4200, stock: 120, minStock: 20, shopId: '1', image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=200' },
-  { id: '2', name: 'Riz Parfumé 25kg', category: 'Alimentaire', price: 18500, cost: 16000, stock: 45, minStock: 10, shopId: '1', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=200' },
-  { id: '3', name: 'Huile Mayor 1L', category: 'Alimentaire', price: 1200, cost: 950, stock: 200, minStock: 50, shopId: '2', image: 'https://images.unsplash.com/photo-1474631245212-32dc3c8310c6?auto=format&fit=crop&q=80&w=200' },
-  { id: '4', name: 'Guinness PM', category: 'Boissons', price: 900, cost: 750, stock: 240, minStock: 48, shopId: '1', image: 'https://images.unsplash.com/photo-1624517452488-04869289c4ca?auto=format&fit=crop&q=80&w=200' },
-  { id: '5', name: 'Savon Azur', category: 'Hygiène', price: 400, cost: 300, stock: 500, minStock: 100, shopId: '2', image: 'https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&q=80&w=200' },
-  { id: '6', name: 'Spaghetti Pasta', category: 'Alimentaire', price: 500, cost: 350, stock: 150, minStock: 30, shopId: '1', image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=200' },
-];
-
-const MOCK_SALES: Sale[] = [
-  { id: '1', date: new Date().toISOString(), total: 14400, items: [{ productId: '1', quantity: 3, price: 4800, name: 'Ciment Dangote' }], shopId: '1', sellerId: '2', paymentMethod: 'CASH' },
-  { id: '2', date: new Date(Date.now() - 86400000).toISOString(), total: 18500, items: [{ productId: '2', quantity: 1, price: 18500, name: 'Riz Parfumé' }], shopId: '1', sellerId: '2', paymentMethod: 'MTN_MOMO' },
-  { id: '3', date: new Date(Date.now() - 172800000).toISOString(), total: 2700, items: [{ productId: '4', quantity: 3, price: 900, name: 'Guinness PM' }], shopId: '1', sellerId: '2', paymentMethod: 'CASH' },
-];
-
-const MOCK_EXPENSES: Expense[] = [
-  { id: '1', date: new Date().toISOString(), description: 'Facture Électricité ENEO', amount: 25000, category: 'Charges', shopId: '1' },
-  { id: '2', date: new Date(Date.now() - 432000000).toISOString(), description: 'Transport Marchandises', amount: 15000, category: 'Transport', shopId: '1' },
-];
-
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
@@ -184,32 +164,36 @@ export const useStore = create<AppState>()(
 
         set({ isLoading: true });
         try {
-          // Fetch Shops
-          const shopsRes = await fetch(`/api/shops`);
+          // Fetch Shops & Team
+          const [shopsRes, teamRes] = await Promise.all([
+            fetch(`/api/shops`),
+            fetch(`/api/team`)
+          ]);
           const shopsData = await shopsRes.json();
-
-          // Fetch All Users (for Team management)
-          const teamRes = await fetch(`/api/team`);
           const teamData = await teamRes.json();
 
-          // If seller, fetch specific shop data
           const shopId = currentUser.shopId;
           let productsData = [];
           let statsData = null;
           let expensesData = [];
+          let salesData = [];
 
-          if (shopId) {
-            // Fetch Products
-            const productsRes = await fetch(`/api/products?shopId=${shopId}`);
-            productsData = await productsRes.json();
+          // For directors, if no shopId selected, try to use first shop
+          const targetId = currentUser.role === 'director'
+            ? (shopId || (Array.isArray(shopsData) && shopsData.length > 0 ? shopsData[0].id : null))
+            : shopId;
 
-            // Fetch Summary
-            const statsRes = await fetch(`/api/stats/summary?shopId=${shopId}`);
-            statsData = await statsRes.json();
-
-            // Fetch Recent Expenses
-            const expensesRes = await fetch(`/api/expenses?shopId=${shopId}`);
-            expensesData = await expensesRes.json();
+          if (targetId) {
+            const [pRes, sRes, eRes, salesRes] = await Promise.all([
+              fetch(`/api/products?shopId=${targetId}`),
+              fetch(`/api/stats/summary?shopId=${targetId}`),
+              fetch(`/api/expenses?shopId=${targetId}`),
+              fetch(`/api/sales/get?shopId=${targetId}`)
+            ]);
+            productsData = await pRes.json();
+            statsData = await sRes.json();
+            expensesData = await eRes.json();
+            salesData = await salesRes.json();
           }
 
           set({
@@ -218,6 +202,7 @@ export const useStore = create<AppState>()(
             products: Array.isArray(productsData) ? productsData : [],
             stats: statsData,
             expenses: Array.isArray(expensesData) ? expensesData : [],
+            sales: Array.isArray(salesData) ? salesData : [],
             isLoading: false
           });
         } catch (error) {

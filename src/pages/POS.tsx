@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Search, Plus, Minus, X, ShoppingBag, CreditCard, Smartphone, Banknote,
-  Check, Trash2, Image as ImageIcon
+  Check, Trash2, ChevronRight
 } from 'lucide-react';
 import { useStore } from '../store';
 
@@ -226,18 +226,21 @@ export function POS() {
 
       {/* MOBILE: Bottom Sheet Cart Toggle (Visible only on mobile) */}
       {cartItems.length > 0 && (
-        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-30">
+        <div className="lg:hidden fixed bottom-20 left-0 right-0 px-4 z-30 animate-slideUp">
           <button
-            onClick={() => setShowPaymentModal(true)} // In mobile, directly open payment/cart modal
-            className="w-full p-4 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 flex items-center justify-between"
+            onClick={() => setShowPaymentModal(true)}
+            className="w-full p-4 rounded-2xl bg-indigo-600 text-white shadow-2xl shadow-indigo-500/40 flex items-center justify-between group active:scale-[0.98] transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="bg-white/20 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">
+              <div className="bg-white text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-inner group-hover:scale-110 transition-transform">
                 {cartCount}
               </div>
-              <span className="font-semibold">Voir le panier</span>
+              <span className="font-bold tracking-wide">Payer maintenant</span>
             </div>
-            <span className="font-bold text-lg">{formatCFA(cartTotal)}</span>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-lg">{formatCFA(cartTotal)}</span>
+              <ChevronRight className="w-5 h-5 opacity-70" />
+            </div>
           </button>
         </div>
       )}
