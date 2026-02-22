@@ -1,4 +1,4 @@
-import { db } from '../../src/db';
+import { db } from '../../src/db/index.js';
 import { sales } from '../../src/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
