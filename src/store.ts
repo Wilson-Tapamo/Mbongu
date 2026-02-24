@@ -164,9 +164,10 @@ export const useStore = create<AppState>()(
 
         set({ isLoading: true });
         try {
+          const userId = currentUser.id;
           const [shopsRes, teamRes] = await Promise.all([
-            fetch(`/api/shops`),
-            fetch(`/api/team`)
+            fetch(`/api/shops?userId=${userId}`),
+            fetch(`/api/team?userId=${userId}`)
           ]);
           const shopsData = shopsRes.ok ? await shopsRes.json() : [];
           const teamData = teamRes.ok ? await teamRes.json() : [];

@@ -247,12 +247,12 @@ export function POS() {
 
       {/* Payment / Cart Modal (Mobile & Desktop Overlay) */}
       {showPaymentModal && (
-        <div className="fixed inset-0 z-[60] flex items-end lg:items-center justify-center bg-black/60 backdrop-blur-sm p-4 lg:p-0">
-          <div className={`w-full max-w-md lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark bg-gray-900' : 'glass-card bg-white'}`}>
+        <div className="fixed inset-0 z-[60] flex items-end lg:items-center justify-center bg-black/60 backdrop-blur-sm p-4 lg:p-0" onClick={() => setShowPaymentModal(false)}>
+          <div className={`w-full max-w-md lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
 
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
-              <h2 className="text-xl font-bold dark:text-white">Finaliser la vente</h2>
+              <h2 className="text-xl font-bold">Finaliser la vente</h2>
               <button onClick={() => setShowPaymentModal(false)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
@@ -260,13 +260,13 @@ export function POS() {
 
             {/* Total Display */}
             <div className="p-6 text-center bg-indigo-50 dark:bg-indigo-900/20">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total à payer</p>
-              <p className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">{formatCFA(cartTotal)}</p>
+              <p className="text-sm mb-1">Total à payer</p>
+              <p className="text-4xl font-bold text-indigo-600">{formatCFA(cartTotal)}</p>
             </div>
 
             {/* Payment Methods */}
             <div className="p-6">
-              <p className="text-sm font-semibold mb-4 dark:text-white">Mode de paiement</p>
+              <p className="text-sm font-semibold mb-4">Mode de paiement</p>
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { id: 'CASH' as const, label: 'Espèces', icon: Banknote, color: 'text-emerald-500' },

@@ -88,7 +88,7 @@ export function Dashboard() {
       {/* Header with Period Select */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold dark:text-white">Tableau de Bord</h1>
+          <h1 className="text-2xl font-bold">Tableau de Bord</h1>
           <p className="text-sm text-gray-500">Résumé de vos activités {isDirector ? 'multi-boutiques' : ''}</p>
         </div>
         <div className={`flex p-1 rounded-xl ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-100'}`}>

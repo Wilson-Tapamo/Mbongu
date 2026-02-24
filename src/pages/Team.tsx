@@ -166,9 +166,9 @@ export default function Team() {
 
       {/* Add Shop Modal */}
       {showShopModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="glass-card bg-white/95 dark:bg-gray-900/95 w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn">
-            <h3 className="text-xl font-bold mb-4 dark:text-white">Nouvelle Boutique</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4" onClick={() => setShowShopModal(false)}>
+          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">Nouvelle Boutique</h3>
             <form onSubmit={handleAddShop} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom de la boutique</label>
@@ -214,9 +214,9 @@ export default function Team() {
 
       {/* Add User Modal */}
       {showUserModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="glass-card bg-white/95 dark:bg-gray-900/95 w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn">
-            <h3 className="text-xl font-bold mb-4 dark:text-white">Nouveau Membre</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4" onClick={() => setShowUserModal(false)}>
+          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">Nouveau Membre</h3>
             <form onSubmit={handleAddUser} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom complet</label>

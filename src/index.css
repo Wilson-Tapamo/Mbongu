@@ -6,16 +6,18 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/70 backdrop-blur-2xl border border-white/50 shadow-[0_8px_32px_rgba(79,70,229,0.08)];
+    @apply bg-white/30 backdrop-blur-2xl border border-white/40 shadow-[0_8px_32px_rgba(79, 70, 229, 0.12)];
   }
+
   .glass-dark {
-    @apply bg-slate-950/70 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)];
+    @apply bg-slate-950/60 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0, 0, 0, 0.4)];
   }
-  
+
   /* Cards inside the glass container */
   .glass-card {
     @apply bg-white/40 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-md hover:bg-white/60 transition-all duration-500;
   }
+
   .glass-card-dark {
     @apply bg-slate-900/40 backdrop-blur-md border border-white/5 shadow-sm hover:shadow-md hover:bg-slate-900/60 transition-all duration-500;
   }
@@ -23,6 +25,7 @@
   .glass-input {
     @apply bg-white/50 border-white/60 focus:ring-2 focus:ring-indigo-500/30 backdrop-blur-sm transition-all;
   }
+
   .glass-input-dark {
     @apply bg-slate-900/50 border-white/10 focus:ring-2 focus:ring-indigo-500/30 backdrop-blur-sm transition-all;
   }
@@ -33,6 +36,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -45,20 +49,47 @@ html {
 
 /* Custom animations */
 @keyframes bounceIn {
-  0% { transform: scale(0.3); opacity: 0; }
-  50% { transform: scale(1.05); }
-  70% { transform: scale(0.9); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Line clamp utility */
@@ -76,13 +107,16 @@ button {
 }
 
 /* Smooth page transitions */
-main > * {
+main>* {
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Better touch targets for mobile */
 @media (max-width: 768px) {
-  button, a, select {
+
+  button,
+  a,
+  select {
     min-height: 44px;
   }
 }

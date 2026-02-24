@@ -1,13 +1,32 @@
 import { db } from '../../src/db/index.js';
-import { users } from '../../src/db/schema.js';
-import { eq, desc } from 'drizzle-orm';
+import { users, shops } from '../../src/db/schema.js';
+import { eq, desc, or, inArray, sql } from 'drizzle-orm';
 
 export default async function handler(req: any, res: any) {
     if (req.method === 'GET') {
         try {
-            const allUsers = await db.select().from(users).orderBy(desc(users.name));
-            // Remove sensitive data if needed (passwords aren't in schema yet but anyway)
-            return res.status(200).json(allUsers);
+            const { userId, shopId } = req.query;
+
+            let filteredUsers = [];
+
+            if (shopId) {
+                // Get users for a specific shop
+                filteredUsers = await db.select().from(users).where(eq(users.shopId, shopId as string)).orderBy(desc(users.name));
+            } else if (userId) {
+                // Get users for shops owned by this director
+                const userShops = await db.select({ id: shops.id }).from(shops).where(eq(shops.ownerId, userId as string));
+                const shopIds = userShops.map(s => s.id);
+
+                if (shopIds.length > 0) {
+                    // Build OR conditions for each shop
+                    const conditions = shopIds.map(shopId => eq(users.shopId, shopId));
+                    filteredUsers = await db.select().from(users).where(
+                        or(...conditions)
+                    ).orderBy(desc(users.name));
+                }
+            }
+
+            return res.status(200).json(filteredUsers);
         } catch (error: any) {
             return res.status(500).json({ message: error.message });
         }

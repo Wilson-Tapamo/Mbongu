@@ -155,8 +155,8 @@ export function Stock() {
 
       {/* Add Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 overflow-y-auto">
-          <div className={`w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp sm:animate-bounceIn relative flex flex-col max-h-[92vh] sm:max-h-[90vh] ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 overflow-y-auto" onClick={() => setShowAddModal(false)}>
+          <div className={`w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp sm:animate-bounceIn relative flex flex-col max-h-[92vh] sm:max-h-[90vh] ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
 
             <div className="w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3 sm:hidden" />
 
@@ -270,8 +270,8 @@ export function Stock() {
 
       {/* Product Detail / Stock Movement Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className={`w-full max-w-md rounded-3xl shadow-2xl animate-bounceIn p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setSelectedProduct(null)}>
+          <div className={`w-full max-w-md rounded-3xl shadow-2xl animate-bounceIn p-6 ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
 
             <div className="flex justify-between items-start mb-6">
               <div className="flex gap-4">

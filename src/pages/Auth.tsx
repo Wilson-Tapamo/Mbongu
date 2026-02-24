@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowRight, ShieldCheck, User, Phone, Lock,
-    ChevronLeft, Sparkles, CheckCircle2, Eye, EyeOff, Sun, Moon
+    ChevronLeft, Sparkles, CheckCircle2, Eye, EyeOff
 } from 'lucide-react';
 import { useStore } from '../store';
 
@@ -42,7 +42,7 @@ export default function Auth() {
     const [showPassword, setShowPassword] = useState(false);
     const [showCountryDropdown, setShowCountryDropdown] = useState(false);
     const [isPreventMultiClick, setIsPreventMultiClick] = useState(false);
-    const { login, darkMode, toggleDarkMode } = useStore();
+    const { login, darkMode } = useStore();
 
     // Prevent multiple clicks
     const handleClick = (callback: () => void) => {
@@ -199,8 +199,8 @@ export default function Auth() {
                 transition={{ delay: 0.2 }}
                 className="space-y-2"
             >
-                <h1 className="text-3xl font-black tracking-tight text-white italic">NKAP</h1>
-                <p className="text-indigo-200/80 font-medium">Le logiciel qui protège ton argent.</p>
+                <h1 className={`text-3xl font-black tracking-tight ${theme.text} italic`}>NKAP</h1>
+                <p className={`font-medium ${theme.textSecondary}`}>Le logiciel qui protège ton argent.</p>
             </motion.div>
 
             <motion.div
@@ -236,15 +236,15 @@ export default function Auth() {
             exit={{ opacity: 0, x: -50 }}
             className={`${theme.glass} rounded-3xl p-6 space-y-6`}
         >
-            <button onClick={() => prevStep('welcome')} className="p-2 -ml-2 text-indigo-300 hover:text-white transition-colors">
+            <button onClick={() => prevStep('welcome')} className={`p-2 -ml-2 hover:opacity-70 transition-colors ${darkMode ? 'text-indigo-300' : 'text-indigo-600'}`}>
                 <ChevronLeft className="w-6 h-6" />
             </button>
             <div className="space-y-4">
                 <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
                     <User className="w-8 h-8 text-indigo-400" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Comment t'appelles-tu ?</h2>
-                <p className="text-indigo-200/60 text-sm">Utilise ton vrai nom ou le nom de ta boutique.</p>
+                <h2 className={`text-2xl font-bold ${theme.text}`}>Comment t'appelles-tu ?</h2>
+                <p className={`text-sm ${theme.textSecondary}`}>Utilise ton vrai nom ou le nom de ta boutique.</p>
                 <input
                     autoFocus
                     type="text"
@@ -273,15 +273,15 @@ export default function Auth() {
             exit={{ opacity: 0, x: -50 }}
             className={`${theme.glass} rounded-3xl p-6 space-y-6`}
         >
-            <button onClick={() => prevStep('name')} className="p-2 -ml-2 text-indigo-300 hover:text-white transition-colors">
+            <button onClick={() => prevStep('name')} className={`p-2 -ml-2 hover:opacity-70 transition-colors ${darkMode ? 'text-indigo-300' : 'text-indigo-600'}`}>
                 <ChevronLeft className="w-6 h-6" />
             </button>
             <div className="space-y-4">
                 <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
                     <Phone className="w-8 h-8 text-indigo-400" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">{isLogin ? 'Content de te revoir !' : 'Ton numéro WhatsApp'}</h2>
-                <p className="text-indigo-200/60 text-sm">{isLogin ? 'Connecte-toi pour surveiller tes boutiques' : 'C\'est ici que tu recevras tes alertes de sécurité.'}</p>
+                <h2 className={`text-2xl font-bold ${theme.text}`}>{isLogin ? 'Content de te revoir !' : 'Ton numéro WhatsApp'}</h2>
+                <p className={`text-sm ${theme.textSecondary}`}>{isLogin ? 'Connecte-toi pour surveiller tes boutiques' : 'C\'est ici que tu recevras tes alertes de sécurité.'}</p>
 
                 {/* Country selector */}
                 <div className="relative">
@@ -352,15 +352,15 @@ export default function Auth() {
             exit={{ opacity: 0, x: -50 }}
             className={`${theme.glass} rounded-3xl p-6 space-y-6`}
         >
-            <button onClick={() => prevStep('phone')} className="p-2 -ml-2 text-indigo-300 hover:text-white transition-colors">
+            <button onClick={() => prevStep('phone')} className={`p-2 -ml-2 hover:opacity-70 transition-colors ${darkMode ? 'text-indigo-300' : 'text-indigo-600'}`}>
                 <ChevronLeft className="w-6 h-6" />
             </button>
             <div className="space-y-4">
                 <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
                     <Lock className="w-8 h-8 text-indigo-400" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">{isLogin ? 'Tape ton code secret' : 'Choisis un code secret'}</h2>
-                <p className="text-indigo-200/60 text-sm">{isLogin ? 'Pour accéder à ton tableau de bord' : 'Mémorise-le bien, il protège tes finances.'}</p>
+                <h2 className={`text-2xl font-bold ${theme.text}`}>{isLogin ? 'Tape ton code secret' : 'Choisis un code secret'}</h2>
+                <p className={`text-sm ${theme.textSecondary}`}>{isLogin ? 'Pour accéder à ton tableau de bord' : 'Mémorise-le bien, il protège tes finances.'}</p>
 
                 {/* Password input with show/hide toggle */}
                 <div className="relative">
@@ -375,7 +375,7 @@ export default function Auth() {
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-indigo-300 hover:text-white transition-colors"
+                        className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:opacity-70 transition-colors ${darkMode ? 'text-indigo-300' : 'text-indigo-600'}`}
                     >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -459,14 +459,6 @@ export default function Auth() {
             {/* Background decorations */}
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-indigo-600/20 blur-[100px]" />
             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-600/20 blur-[100px]" />
-
-            {/* Theme toggle */}
-            <button
-                onClick={toggleDarkMode}
-                className="absolute top-4 right-4 p-3 rounded-full glass hover:bg-white/20 transition-all z-[110]"
-            >
-                {darkMode ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-gray-700" />}
-            </button>
 
             <div className="w-full max-w-md relative">
                 <AnimatePresence mode="wait" custom={direction}>
