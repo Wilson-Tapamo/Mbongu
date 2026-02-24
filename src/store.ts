@@ -172,15 +172,21 @@ export const useStore = create<AppState>()(
           const shopsData = shopsRes.ok ? await shopsRes.json() : [];
           const teamData = teamRes.ok ? await teamRes.json() : [];
 
-          const shopId = currentUser.shopId;
+          // For directors, use first shop if no shopId is set
+          // For sellers, use their shopId
+          let targetId = currentUser.shopId;
+          if (!targetId && currentUser.role === 'director' && Array.isArray(shopsData) && shopsData.length > 0) {
+            targetId = shopsData[0].id;
+          }
+
+          console.log('fetchData - currentUser:', currentUser);
+          console.log('fetchData - shopsData:', shopsData);
+          console.log('fetchData - targetId:', targetId);
+
           let productsData = [];
           let statsData = null;
           let expensesData = [];
           let salesData = [];
-
-          const targetId = currentUser.role === 'director'
-            ? (shopId || (Array.isArray(shopsData) && shopsData.length > 0 ? shopsData[0].id : null))
-            : shopId;
 
           if (targetId) {
             const [pRes, sRes, eRes, salesRes] = await Promise.all([
