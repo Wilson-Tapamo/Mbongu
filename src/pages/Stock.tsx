@@ -17,6 +17,8 @@ export function Stock() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -46,17 +48,31 @@ export function Stock() {
     e.preventDefault();
     if (!currentUser?.shopId) return;
 
-    await addProduct({
-      ...newProduct,
-      shopId: currentUser.shopId,
-      price: Number(newProduct.price),
-      cost: Number(newProduct.cost),
-      stock: Number(newProduct.stock),
-      minStock: Number(newProduct.minStock)
-    } as any);
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
 
-    setShowAddModal(false);
-    setNewProduct({ name: '', price: '', cost: '', stock: '', minStock: '', category: 'Epicerie', image: '' });
+    try {
+      await addProduct({
+        ...newProduct,
+        shopId: currentUser.shopId,
+        price: Number(newProduct.price),
+        cost: Number(newProduct.cost),
+        stock: Number(newProduct.stock),
+        minStock: Number(newProduct.minStock)
+      } as any);
+
+      setSubmitStatus('success');
+      setTimeout(() => {
+        setShowAddModal(false);
+        setNewProduct({ name: '', price: '', cost: '', stock: '', minStock: '', category: 'Epicerie', image: '' });
+        setSubmitStatus('idle');
+      }, 1500);
+    } catch (error) {
+      setSubmitStatus('error');
+      setTimeout(() => setSubmitStatus('idle'), 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleStockUpdate = (e: React.FormEvent) => {
@@ -250,9 +266,35 @@ export function Stock() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold transition-all hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] mt-2 shadow-lg shadow-indigo-500/30"
+                disabled={isSubmitting}
+                className={`w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold transition-all hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] mt-2 shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
               >
-                Enregistrer le produit
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Enregistrement...
+                  </>
+                ) : submitStatus === 'success' ? (
+                  <>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Produit ajouté!
+                  </>
+                ) : submitStatus === 'error' ? (
+                  <>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Erreur!
+                  </>
+                ) : (
+                  'Enregistrer le produit'
+                )}
               </button>
             </form>
           </div>
