@@ -47,6 +47,7 @@ export function Stock() {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser?.shopId) {
+      console.error('No shopId found for currentUser:', currentUser);
       setSubmitStatus('error');
       setTimeout(() => setSubmitStatus('idle'), 3000);
       return;
@@ -55,15 +56,18 @@ export function Stock() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    const productData = {
+      ...newProduct,
+      shopId: currentUser.shopId,
+      price: Number(newProduct.price),
+      cost: Number(newProduct.cost),
+      stock: Number(newProduct.stock),
+      minStock: Number(newProduct.minStock)
+    };
+    console.log('Submitting product:', productData);
+
     try {
-      await addProduct({
-        ...newProduct,
-        shopId: currentUser.shopId,
-        price: Number(newProduct.price),
-        cost: Number(newProduct.cost),
-        stock: Number(newProduct.stock),
-        minStock: Number(newProduct.minStock)
-      } as any);
+      await addProduct(productData as any);
 
       setSubmitStatus('success');
       setTimeout(() => {
@@ -73,6 +77,7 @@ export function Stock() {
       }, 1500);
     } catch (error: any) {
       console.error('Error adding product:', error);
+      alert(error?.message || 'Erreur lors de l\'ajout du produit');
       setSubmitStatus('error');
       setTimeout(() => setSubmitStatus('idle'), 3000);
     } finally {

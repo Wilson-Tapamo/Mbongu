@@ -231,15 +231,20 @@ export const useStore = create<AppState>()(
         if (res.ok) get().fetchData();
       },
       addProduct: async (product) => {
+        console.log('Store addProduct called with:', product);
         const res = await fetch('/api/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(product)
         });
+        console.log('API response status:', res.status);
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({ message: 'Failed to add product' }));
+          console.error('API error:', errorData);
           throw new Error(errorData.message || 'Failed to add product');
         }
+        const data = await res.json();
+        console.log('API success response:', data);
         get().fetchData();
       },
       addSale: async (sale) => {

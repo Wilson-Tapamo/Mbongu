@@ -105,7 +105,7 @@ export function App() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-24 px-4 lg:pl-72 lg:pr-6 pb-24 lg:pb-6 transition-all duration-300 relative z-10 h-screen overflow-y-auto custom-scrollbar">
+      <main className="pt-24 px-4 lg:pl-72 lg:pr-6 pb-24 lg:pb-6 transition-all duration-300 relative z-0 h-screen overflow-y-auto custom-scrollbar">
         {currentPage === 'dashboard' && <Dashboard />}
         {currentPage === 'pos' && <POS />}
         {currentPage === 'stock' && <Stock />}

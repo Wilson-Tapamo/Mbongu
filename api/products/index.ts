@@ -18,22 +18,27 @@ export default async function handler(req: any, res: any) {
     }
 
     if (req.method === 'POST') {
+        console.log('POST /api/products called with body:', req.body);
         try {
-            const { name, shopId, price, cost, stock, minStock, category, image } = req.body;
+            const { name, shopId, price, cost, stock, minStock, category } = req.body;
+
+            console.log('Parsed fields:', { name, shopId, price, cost, stock, minStock, category });
 
             if (!name || !shopId || price === undefined || cost === undefined || stock === undefined || minStock === undefined || !category) {
+                console.log('Validation failed - missing fields');
                 return res.status(400).json({ message: 'Missing required fields', received: req.body });
             }
 
             const [newProduct] = await db.insert(products).values({
                 name,
                 shopId,
-                price: String(price),
-                cost: String(cost),
+                price,
+                cost,
                 stock,
                 minStock,
                 category,
             }).returning();
+            console.log('Product created successfully:', newProduct);
             return res.status(201).json(newProduct);
         } catch (error: any) {
             console.error('Error creating product:', error);
