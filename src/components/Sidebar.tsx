@@ -36,7 +36,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className={`hidden lg:flex flex-col fixed left-4 top-4 bottom-4 w-64 z-40 rounded-3xl transition-all duration-300 border-0 ${darkMode ? 'glass-dark' : 'glass'}`}>
+      <aside className={`hidden lg:flex flex-col fixed left-4 top-4 bottom-4 w-64 z-10 rounded-3xl transition-all duration-300 border-0 ${darkMode ? 'glass-dark' : 'glass'}`}>
         {/* Logo */}
         <div className="p-6 pb-4">
           <div className="flex items-center gap-3">

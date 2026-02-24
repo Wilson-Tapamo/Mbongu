@@ -6,17 +6,19 @@
 
 @layer utilities {
   .glass {
-    background-color: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 32px rgba(79, 70, 229, 0.15);
+    background-color: #a1a1a112;
+    border: 2px solid #ffffff40;
+    box-shadow: 0 8px 32px #4f46e526;
   }
 
   .glass-dark {
-    background-color: rgba(2, 6, 23, 0.5);
+    -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    background-color: #696a6d1a;
+    border: 2px solid #ffffff1a;
+    box-shadow: 0 8px 32px #0006;
   }
 
   /* Cards inside the glass container */
@@ -35,9 +37,10 @@
   }
 
   .glass-input {
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
+    background-color: #ffffff0a;
+    border: 1px solid #fff9;
   }
 
   .glass-input-dark {
@@ -48,18 +51,29 @@
 
   /* Modal for light mode with solid background */
   .modal-light {
-    background-color: rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px rgba(79, 70, 229, 0.15);
+    background-color: #fefeff54;
+    border: 1px solid #ffffff80;
+    box-shadow: 0 8px 32px #4f46e526;
   }
 
   /* Modal for dark mode */
   .modal-dark {
-    background-color: rgba(15, 23, 42, 0.95);
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    background-color: #8f8fed17;
+    border: 1px solid #ffffff1a;
+    box-shadow: 0 8px 32px #0006;
+  }
+
+  /* Gradient backgrounds */
+  .bg-purple-600\/20 {
+    background-color: color-mix(in oklab, var(--color-purple-600) 50%, transparent);
+  }
+
+  .bg-indigo-600\/20 {
+    background-color: color-mix(in oklab, var(--color-indigo-600) 50%, transparent);
   }
 }
 
@@ -71,6 +85,31 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Modern ultra-discrete scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
 }
 
 /* Smooth scrolling */

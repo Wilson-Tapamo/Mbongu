@@ -226,7 +226,7 @@ export function POS() {
 
       {/* MOBILE: Bottom Sheet Cart Toggle (Visible only on mobile) */}
       {cartItems.length > 0 && (
-        <div className="lg:hidden fixed bottom-20 left-0 right-0 px-4 z-30 animate-slideUp">
+        <div className="lg:hidden fixed bottom-20 left-0 right-0 px-4 z-10 animate-slideUp">
           <button
             onClick={() => setShowPaymentModal(true)}
             className="w-full p-4 rounded-2xl bg-indigo-600 text-white shadow-2xl shadow-indigo-500/40 flex items-center justify-between group active:scale-[0.98] transition-all"

@@ -155,115 +155,106 @@ export function Stock() {
 
       {/* Add Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 overflow-y-auto" onClick={() => setShowAddModal(false)}>
-          <div className={`w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp sm:animate-bounceIn relative flex flex-col max-h-[92vh] sm:max-h-[90vh] ${darkMode ? 'modal-dark' : 'modal-light'}`} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4" onClick={() => setShowAddModal(false)}>
+          <div className={`w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 ${darkMode ? 'modal-dark' : 'modal-light'}`} onClick={e => e.stopPropagation()}>
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 lg:hidden" />
+            <h3 className={`text-lg font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Nouveau Produit</h3>
+            <form onSubmit={handleAddProduct} className="space-y-3">
+              <div className="flex justify-center mb-2">
+                <div className="w-24 h-24 rounded-2xl bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition-all hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10">
+                  {newProduct.image ? (
+                    <img src={newProduct.image} alt="Preview" className="w-full h-full object-cover rounded-2xl" />
+                  ) : (
+                    <>
+                      <Camera className="w-6 h-6 text-gray-400 mb-1" />
+                      <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Photo</span>
+                    </>
+                  )}
+                </div>
+              </div>
 
-            <div className="w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3 sm:hidden" />
-
-            <div className="px-6 py-4 border-b dark:border-gray-800 flex justify-between items-center sticky top-0 bg-inherit z-10 sm:rounded-t-3xl">
-              <h2 className="text-xl font-bold">Nouveau Produit</h2>
-              <button onClick={() => setShowAddModal(false)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 overflow-y-auto pb-32 sm:pb-6">
-              <form onSubmit={handleAddProduct} className="space-y-5">
-                <div className="flex justify-center mb-2">
-                  <div className="w-24 h-24 rounded-2xl bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition-all hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10">
-                    {newProduct.image ? (
-                      <img src={newProduct.image} alt="Preview" className="w-full h-full object-cover rounded-2xl" />
-                    ) : (
-                      <>
-                        <Camera className="w-6 h-6 text-gray-400 mb-1" />
-                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Photo</span>
-                      </>
-                    )}
-                  </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Nom du produit</label>
+                  <input
+                    type="text"
+                    required
+                    value={newProduct.name}
+                    onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
+                    className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
+                    placeholder="Ex: Savon de Marseille"
+                  />
                 </div>
 
-                <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Nom du produit</label>
+                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Prix Vente</label>
                     <input
-                      type="text"
+                      type="number"
                       required
-                      value={newProduct.name}
-                      onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
+                      value={newProduct.price}
+                      onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
                       className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
-                      placeholder="Ex: Savon de Marseille"
                     />
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Prix Vente</label>
-                      <input
-                        type="number"
-                        required
-                        value={newProduct.price}
-                        onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
-                        className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Coût Achat</label>
-                      <input
-                        type="number"
-                        required
-                        value={newProduct.cost}
-                        onChange={e => setNewProduct({ ...newProduct, cost: e.target.value })}
-                        className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Stock Initial</label>
-                      <input
-                        type="number"
-                        required
-                        value={newProduct.stock}
-                        onChange={e => setNewProduct({ ...newProduct, stock: e.target.value })}
-                        className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Alerte</label>
-                      <input
-                        type="number"
-                        required
-                        value={newProduct.minStock}
-                        onChange={e => setNewProduct({ ...newProduct, minStock: e.target.value })}
-                        className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
-                      />
-                    </div>
-                  </div>
-
                   <div>
-                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Catégorie</label>
-                    <select
-                      value={newProduct.category}
-                      onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
-                      className={`w-full p-4 rounded-xl border outline-none appearance-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
-                    >
-                      <option>Divers</option>
-                      <option>Alimentaire</option>
-                      <option>Boissons</option>
-                      <option>Matériaux</option>
-                      <option>Hygiène</option>
-                    </select>
+                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Coût Achat</label>
+                    <input
+                      type="number"
+                      required
+                      value={newProduct.cost}
+                      onChange={e => setNewProduct({ ...newProduct, cost: e.target.value })}
+                      className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
+                    />
                   </div>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 p-6 sm:relative sm:p-0 bg-inherit sm:bg-transparent">
-                  <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-xl shadow-indigo-500/30 active:scale-[0.98] transition-all">
-                    Enregistrer le produit
-                  </button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Stock Initial</label>
+                    <input
+                      type="number"
+                      required
+                      value={newProduct.stock}
+                      onChange={e => setNewProduct({ ...newProduct, stock: e.target.value })}
+                      className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Alerte</label>
+                    <input
+                      type="number"
+                      required
+                      value={newProduct.minStock}
+                      onChange={e => setNewProduct({ ...newProduct, minStock: e.target.value })}
+                      className={`w-full p-4 rounded-xl border outline-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
+                    />
+                  </div>
                 </div>
-              </form>
-            </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Catégorie</label>
+                  <select
+                    value={newProduct.category}
+                    onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
+                    className={`w-full p-4 rounded-xl border outline-none appearance-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
+                  >
+                    <option>Divers</option>
+                    <option>Alimentaire</option>
+                    <option>Boissons</option>
+                    <option>Matériaux</option>
+                    <option>Hygiène</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold transition-all hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] mt-2 shadow-lg shadow-indigo-500/30"
+              >
+                Enregistrer le produit
+              </button>
+            </form>
           </div>
         </div>
       )}
@@ -346,8 +337,9 @@ export function Stock() {
             </div>
           </div>
         </div>
-      )}
+      )
+      }
 
-    </div>
+    </div >
   );
 }

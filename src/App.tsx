@@ -46,7 +46,7 @@ export function App() {
       <Sidebar />
 
       {/* Top Bar */}
-      <header className={`fixed top-4 left-4 right-4 lg:left-72 z-30 rounded-2xl transition-colors duration-300 ${darkMode ? 'glass-dark' : 'glass'}`}>
+      <header className={`fixed top-4 left-4 right-4 lg:left-72 z-10 rounded-2xl transition-colors duration-300 ${darkMode ? 'glass-dark' : 'glass'}`}>
         <div className="flex items-center justify-between px-4 lg:px-6 h-16">
           <div className="flex items-center gap-3">
             {/* Mobile menu */}
