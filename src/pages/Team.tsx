@@ -6,6 +6,8 @@ export default function Team() {
   const { shops, users, addShop, addUser, removeUser, currentUser, darkMode } = useStore();
   const [showShopModal, setShowShopModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [isSubmittingShop, setIsSubmittingShop] = useState(false);
+  const [isSubmittingUser, setIsSubmittingUser] = useState(false);
 
   // Shop Form State
   const [newShopName, setNewShopName] = useState('');
@@ -19,17 +21,24 @@ export default function Team() {
 
   const handleAddShop = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newShopName && newShopLocation) {
-      await addShop({ name: newShopName, location: newShopLocation });
+    if (newShopName && newShopLocation && currentUser) {
+      setIsSubmittingShop(true);
+      await addShop({
+        name: newShopName,
+        location: newShopLocation,
+        ownerId: currentUser.id
+      });
       setNewShopName('');
       setNewShopLocation('');
       setShowShopModal(false);
+      setIsSubmittingShop(false);
     }
   };
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newUserName && newUserEmail) {
+      setIsSubmittingUser(true);
       await addUser({
         name: newUserName,
         email: newUserEmail,
@@ -41,6 +50,7 @@ export default function Team() {
       setNewUserRole('seller');
       setNewUserShopId('');
       setShowUserModal(false);
+      setIsSubmittingUser(false);
     }
   };
 
@@ -202,9 +212,18 @@ export default function Team() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20"
+                  disabled={isSubmittingShop}
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-70"
                 >
-                  Créer
+                  {isSubmittingShop ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Création...
+                    </>
+                  ) : 'Créer'}
                 </button>
               </div>
             </form>
@@ -279,9 +298,18 @@ export default function Team() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-500/20"
+                  disabled={isSubmittingUser}
+                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-70"
                 >
-                  Ajouter
+                  {isSubmittingUser ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Ajout...
+                    </>
+                  ) : 'Ajouter'}
                 </button>
               </div>
             </form>

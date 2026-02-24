@@ -18,6 +18,7 @@ export interface Shop {
   id: string;
   name: string;
   location: string;
+  ownerId?: string;
 }
 
 export interface Product {
