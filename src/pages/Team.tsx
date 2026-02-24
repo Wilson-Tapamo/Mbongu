@@ -3,7 +3,7 @@ import { useStore } from '../store';
 import { Plus, Trash2, Store, Users, UserPlus, MapPin, Mail, Shield } from 'lucide-react';
 
 export default function Team() {
-  const { shops, users, addShop, addUser, removeUser, currentUser } = useStore();
+  const { shops, users, addShop, addUser, removeUser, currentUser, darkMode } = useStore();
   const [showShopModal, setShowShopModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
 
@@ -166,8 +166,8 @@ export default function Team() {
 
       {/* Add Shop Modal */}
       {showShopModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4" onClick={() => setShowShopModal(false)}>
-          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[70] p-4" onClick={() => setShowShopModal(false)}>
+          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn ${darkMode ? 'modal-dark' : 'modal-light'}`} onClick={e => e.stopPropagation()}>
             <h3 className="text-xl font-bold mb-4">Nouvelle Boutique</h3>
             <form onSubmit={handleAddShop} className="space-y-4">
               <div>
@@ -214,8 +214,8 @@ export default function Team() {
 
       {/* Add User Modal */}
       {showUserModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4" onClick={() => setShowUserModal(false)}>
-          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[70] p-4" onClick={() => setShowUserModal(false)}>
+          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn ${darkMode ? 'modal-dark' : 'modal-light'}`} onClick={e => e.stopPropagation()}>
             <h3 className="text-xl font-bold mb-4">Nouveau Membre</h3>
             <form onSubmit={handleAddUser} className="space-y-4">
               <div>

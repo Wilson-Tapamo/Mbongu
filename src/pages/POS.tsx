@@ -247,8 +247,8 @@ export function POS() {
 
       {/* Payment / Cart Modal (Mobile & Desktop Overlay) */}
       {showPaymentModal && (
-        <div className="fixed inset-0 z-[60] flex items-end lg:items-center justify-center bg-black/60 backdrop-blur-sm p-4 lg:p-0" onClick={() => setShowPaymentModal(false)}>
-          <div className={`w-full max-w-md lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[70] flex items-end lg:items-center justify-center bg-black/60 backdrop-blur-sm p-4 lg:p-0" onClick={() => setShowPaymentModal(false)}>
+          <div className={`w-full max-w-md lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-bounceIn ${darkMode ? 'modal-dark' : 'modal-light'}`} onClick={e => e.stopPropagation()}>
 
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
