@@ -247,7 +247,7 @@ export function POS() {
 
       {/* Payment / Cart Modal (Mobile & Desktop Overlay) */}
       {showPaymentModal && (
-        <div className="fixed inset-0 z-50 flex items-end lg:items-center justify-center bg-black/60 backdrop-blur-sm p-4 lg:p-0">
+        <div className="fixed inset-0 z-[60] flex items-end lg:items-center justify-center bg-black/60 backdrop-blur-sm p-4 lg:p-0">
           <div className={`w-full max-w-md lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-bounceIn ${darkMode ? 'glass-card-dark bg-gray-900' : 'glass-card bg-white'}`}>
 
             {/* Modal Header */}

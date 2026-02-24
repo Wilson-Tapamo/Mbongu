@@ -253,7 +253,7 @@ export function Finance() {
 
       {/* Add Expense Modal */}
       {showAddExpense && (
-        <div className="fixed inset-0 z-50 flex items-end lg:items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowAddExpense(false)}>
+        <div className="fixed inset-0 z-[60] flex items-end lg:items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowAddExpense(false)}>
           <div className={`w-full max-w-lg rounded-t-3xl lg:rounded-3xl p-6 ${darkMode ? 'glass-card-dark' : 'glass-card'}`} onClick={e => e.stopPropagation()}>
             <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 lg:hidden" />
             <h3 className={`text-lg font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Ajouter une dépense</h3>

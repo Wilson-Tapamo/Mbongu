@@ -166,7 +166,7 @@ export default function Team() {
 
       {/* Add Shop Modal */}
       {showShopModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
           <div className="glass-card bg-white/95 dark:bg-gray-900/95 w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn">
             <h3 className="text-xl font-bold mb-4 dark:text-white">Nouvelle Boutique</h3>
             <form onSubmit={handleAddShop} className="space-y-4">
@@ -214,7 +214,7 @@ export default function Team() {
 
       {/* Add User Modal */}
       {showUserModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
           <div className="glass-card bg-white/95 dark:bg-gray-900/95 w-full max-w-md p-6 rounded-2xl shadow-2xl animate-bounceIn">
             <h3 className="text-xl font-bold mb-4 dark:text-white">Nouveau Membre</h3>
             <form onSubmit={handleAddUser} className="space-y-4">

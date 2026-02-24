@@ -58,7 +58,7 @@ export function App() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">N</span>
               </div>
-              <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Mbongu</span>
+              <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Nkap</span>
             </div>
             {/* Desktop page title */}
             <div className="hidden lg:block">

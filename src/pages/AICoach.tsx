@@ -12,7 +12,7 @@ export default function AICoach() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: "👋 Salut patron ! Je suis **Mbongu Coach**, ton partenaire de croissance. Pose-moi n'importe quelle question sur ton business. \n\nPar exemple: \"Combien j'ai gagné cette semaine ?\" ou \"Quel produit bloque mon cash ?\"" }
+    { role: 'ai', text: "👋 Salut patron ! Je suis **Nkap Coach**, ton partenaire de croissance. Pose-moi n'importe quelle question sur ton business. \n\nPar exemple: \"Combien j'ai gagné cette semaine ?\" ou \"Quel produit bloque mon cash ?\"" }
   ]);
 
   const filtered = activeFilter === 'all' ? aiInsights : aiInsights.filter(i => i.type === activeFilter);
@@ -64,7 +64,7 @@ export default function AICoach() {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className={`font-semibold text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>Mbongu Coach</p>
+              <p className={`font-semibold text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>Nkap Coach</p>
               <p className="text-xs text-emerald-500">Prêt à t'aider à décider</p>
             </div>
           </div>
@@ -78,8 +78,8 @@ export default function AICoach() {
           {chatMessages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-[fadeIn_0.3s_ease-out]`}>
               <div className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${msg.role === 'user'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-sm shadow-indigo-500/20'
-                  : darkMode ? 'glass-card-dark rounded-bl-sm text-gray-200' : 'glass-card rounded-bl-sm text-gray-800'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-sm shadow-indigo-500/20'
+                : darkMode ? 'glass-card-dark rounded-bl-sm text-gray-200' : 'glass-card rounded-bl-sm text-gray-800'
                 }`}>
                 <p className="text-sm whitespace-pre-line leading-relaxed">{msg.text}</p>
               </div>
@@ -190,8 +190,8 @@ export default function AICoach() {
       <div className="space-y-3">
         {filtered.map((insight) => (
           <div key={insight.id} className={`rounded-2xl p-4 transition-all hover:scale-[1.005] cursor-pointer border-l-4 ${insight.type === 'warning' ? 'border-l-amber-500' :
-              insight.type === 'opportunity' ? 'border-l-emerald-500' :
-                insight.type === 'action' ? 'border-l-indigo-500' : 'border-l-blue-500'
+            insight.type === 'opportunity' ? 'border-l-emerald-500' :
+              insight.type === 'action' ? 'border-l-indigo-500' : 'border-l-blue-500'
             } ${darkMode ? 'glass-card-dark hover:bg-white/5' : 'glass-card hover:bg-white/60'}`}>
             <div className="flex items-start gap-3">
               <span className="text-2xl">{insight.icon}</span>

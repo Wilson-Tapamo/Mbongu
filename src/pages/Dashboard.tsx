@@ -112,7 +112,7 @@ export function Dashboard() {
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-amber-300" />
-            <span className="text-indigo-100 text-sm font-medium">Mbongu Coach • Résumé</span>
+            <span className="text-indigo-100 text-sm font-medium">Nkap Coach • Résumé</span>
           </div>
           <p className="text-white text-base lg:text-lg font-medium leading-relaxed">
             Bonjour {currentUser?.name?.split(' ')[0] ?? 'là'} ! {period === 'today' ? "Aujourd'hui" : `Ce ${period === 'week' ? 'semaine' : 'mois'}`} : <span className="text-amber-300 font-bold">{formatCFA(periodRevenue)}</span> de ventes.

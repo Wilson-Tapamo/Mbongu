@@ -260,7 +260,7 @@ export const useStore = create<AppState>()(
       })),
     }),
     {
-      name: 'mbongu-storage',
+      name: 'nkap-storage',
     }
   )
 );

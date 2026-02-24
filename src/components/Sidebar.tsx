@@ -44,7 +44,7 @@ export function Sidebar() {
               <span className="text-white font-bold text-lg">N</span>
             </div>
             <div>
-              <h1 className={`font-bold text-lg tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>Mbongu</h1>
+              <h1 className={`font-bold text-lg tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>Nkap</h1>
               <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 {currentUser?.role === 'director' ? 'Mode Directeur' : 'Mode Vendeur'}
               </p>
