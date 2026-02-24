@@ -11,7 +11,7 @@ const formatCFA = (price: number) => {
 
 export function Stock() {
   const {
-    darkMode, products, addProduct, updateStock, currentUser
+    darkMode, products, addProduct, updateStock, currentUser, shops
   } = useStore();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,7 +27,8 @@ export function Stock() {
     stock: '',
     minStock: '',
     category: 'Epicerie',
-    image: ''
+    image: '',
+    shopId: ''
   });
 
   const [stockMovement, setStockMovement] = useState({
@@ -46,7 +47,11 @@ export function Stock() {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser?.shopId) {
+
+    // Get shopId from form or fallback to current user's shop
+    const shopId = newProduct.shopId || currentUser?.shopId || (currentUser?.role === 'director' && shops.length > 0 ? shops[0].id : null);
+
+    if (!shopId) {
       console.error('No shopId found for currentUser:', currentUser);
       setSubmitStatus('error');
       setTimeout(() => setSubmitStatus('idle'), 3000);
@@ -58,7 +63,7 @@ export function Stock() {
 
     const productData = {
       ...newProduct,
-      shopId: currentUser.shopId,
+      shopId: shopId,
       price: Number(newProduct.price),
       cost: Number(newProduct.cost),
       stock: Number(newProduct.stock),
@@ -72,7 +77,7 @@ export function Stock() {
       setSubmitStatus('success');
       setTimeout(() => {
         setShowAddModal(false);
-        setNewProduct({ name: '', price: '', cost: '', stock: '', minStock: '', category: 'Epicerie', image: '' });
+        setNewProduct({ name: '', price: '', cost: '', stock: '', minStock: '', category: 'Epicerie', image: '', shopId: '' });
         setSubmitStatus('idle');
       }, 1500);
     } catch (error: any) {
@@ -272,6 +277,24 @@ export function Stock() {
                     <option>Hygiène</option>
                   </select>
                 </div>
+
+                {/* Shop selection for directors */}
+                {(currentUser?.role === 'director' || shops.length > 1) && (
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5 ml-1">Boutique</label>
+                    <select
+                      value={newProduct.shopId}
+                      onChange={e => setNewProduct({ ...newProduct, shopId: e.target.value })}
+                      required
+                      className={`w-full p-4 rounded-xl border outline-none appearance-none transition-all ${darkMode ? 'border-gray-700 bg-gray-800 focus:border-indigo-500' : 'border-gray-100 bg-gray-50 focus:border-indigo-500'}`}
+                    >
+                      <option value="">Sélectionner une boutique</option>
+                      {shops.map(shop => (
+                        <option key={shop.id} value={shop.id}>{shop.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <button
