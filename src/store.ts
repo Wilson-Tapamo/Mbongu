@@ -236,7 +236,11 @@ export const useStore = create<AppState>()(
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(product)
         });
-        if (res.ok) get().fetchData();
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({ message: 'Failed to add product' }));
+          throw new Error(errorData.message || 'Failed to add product');
+        }
+        get().fetchData();
       },
       addSale: async (sale) => {
         const res = await fetch('/api/sales', {

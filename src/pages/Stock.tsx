@@ -46,7 +46,11 @@ export function Stock() {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser?.shopId) return;
+    if (!currentUser?.shopId) {
+      setSubmitStatus('error');
+      setTimeout(() => setSubmitStatus('idle'), 3000);
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -67,7 +71,8 @@ export function Stock() {
         setNewProduct({ name: '', price: '', cost: '', stock: '', minStock: '', category: 'Epicerie', image: '' });
         setSubmitStatus('idle');
       }, 1500);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error adding product:', error);
       setSubmitStatus('error');
       setTimeout(() => setSubmitStatus('idle'), 3000);
     } finally {

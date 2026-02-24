@@ -8,7 +8,7 @@
   .glass {
     -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
-    background-color: #a1a1a112;
+    background-color: #f1f1f1ad;
     border: 2px solid #ffffff40;
     box-shadow: 0 8px 32px #4f46e526;
   }

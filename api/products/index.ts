@@ -19,19 +19,25 @@ export default async function handler(req: any, res: any) {
 
     if (req.method === 'POST') {
         try {
-            const { name, shopId, price, cost, stock, minStock, category } = req.body;
+            const { name, shopId, price, cost, stock, minStock, category, image } = req.body;
+
+            if (!name || !shopId || price === undefined || cost === undefined || stock === undefined || minStock === undefined || !category) {
+                return res.status(400).json({ message: 'Missing required fields', received: req.body });
+            }
+
             const [newProduct] = await db.insert(products).values({
                 name,
                 shopId,
-                price,
-                cost,
+                price: String(price),
+                cost: String(cost),
                 stock,
                 minStock,
                 category,
             }).returning();
             return res.status(201).json(newProduct);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            console.error('Error creating product:', error);
+            return res.status(500).json({ message: error.message, stack: error.stack });
         }
     }
 
