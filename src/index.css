@@ -6,11 +6,11 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/30 backdrop-blur-2xl border border-white/40 shadow-[0_8px_32px_rgba(79, 70, 229, 0.12)];
+    @apply bg-white/15 backdrop-blur-2xl border border-white/25 shadow-[0_8px_32px_rgba(79, 70, 229, 0.15)];
   }
 
   .glass-dark {
-    @apply bg-slate-950/60 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0, 0, 0, 0.4)];
+    @apply bg-slate-950/50 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0, 0, 0, 0.4)];
   }
 
   /* Cards inside the glass container */

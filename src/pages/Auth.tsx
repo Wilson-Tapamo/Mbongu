@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowRight, ShieldCheck, User, Phone, Lock,
-    ChevronLeft, Sparkles, CheckCircle2, Eye, EyeOff
+    ChevronLeft, Sparkles, CheckCircle2, Eye, EyeOff, Sun, Moon
 } from 'lucide-react';
 import { useStore } from '../store';
 
@@ -42,7 +42,7 @@ export default function Auth() {
     const [showPassword, setShowPassword] = useState(false);
     const [showCountryDropdown, setShowCountryDropdown] = useState(false);
     const [isPreventMultiClick, setIsPreventMultiClick] = useState(false);
-    const { login, darkMode } = useStore();
+    const { login, darkMode, toggleDarkMode } = useStore();
 
     // Prevent multiple clicks
     const handleClick = (callback: () => void) => {
@@ -459,6 +459,14 @@ export default function Auth() {
             {/* Background decorations */}
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-indigo-600/20 blur-[100px]" />
             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-600/20 blur-[100px]" />
+
+            {/* Theme toggle */}
+            <button
+                onClick={toggleDarkMode}
+                className={`absolute top-4 right-4 p-3 rounded-full ${darkMode ? 'glass-dark' : 'glass'} hover:opacity-80 transition-all z-[110]`}
+            >
+                {darkMode ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-gray-700" />}
+            </button>
 
             <div className="w-full max-w-md relative">
                 <AnimatePresence mode="wait" custom={direction}>
